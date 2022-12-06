@@ -35,7 +35,7 @@
 	
 	//Function Decleration
 	void get_item(char id[8], char str[50]);
-	int remove_data(char *search[8],char item[8]);
+	int remove_data(char search[8]);
 	int check_id(char search[7]);
 	void add_rec_file(void);
 	char *user_pass(void);
@@ -64,50 +64,86 @@
 	void get_item(char id[8], char str[50]){
 	
 //			True -- string found
-			if(strstr("kit",str)!= NULL){
+	printf("%s",str);
+			if(strstr(str,"kit") != NULL){
+//				printf("Yess");
 				total.t_cric.ball++;
 				total.t_cric.bat++;
 				total.t_cric.wicket++;
-				printf("Record Found: id- %s",id);
+				printf("Record Found: id- %s\n",id);
+				printf("Kit returned successfully\n");
 			}
-			else if(strstr("bat",str)!= NULL){
+			else if(strstr(str,"bat")!= NULL){
 				total.t_cric.bat++;
 				printf("Record Found: id- %s\n",id);
 				printf("Bat returned successfully\n");
 			}
-			else if(strstr("wicket",str)!= NULL){
+			else if(strstr(str,"wicket")!= NULL){
 				total.t_cric.wicket++;
 				printf("Record Found: id- %s\n",id);
 				printf("Wicket returned successfully\n");
 			}
-			else if(strstr("ball",str)!= NULL){
+			else if(strstr(str,"ball")!= NULL){
 				total.t_cric.ball++;
 				printf("Record Found: id- %s\n",id);
 				printf("Ball returned successfully\n");
 			}
 			
-			else if(strstr("volleyball",str)!= NULL){
-//			True -- string found
-			if(strstr("kit",str)!= NULL){
+			else if(strstr(str,"volleyball")!= NULL){
 				total.voll++;
 				printf("Record Found: id- %s\n",id);
 				printf("Volley retruned Succesfully");
 			}
-			else if(strstr("chess", str)!= NULL){
+
+			else if(strstr(str,"chess")!= NULL){
 				total.chess++;
 				printf("Record Found: id- %s\n",id);
 				printf("Chess returned sucessfully");
 			}
-			else if(strstr("set",str)!=NULL){
+			else if(strstr(str,"set")==NULL){
 				total.t_bad.racket++;
 				total.t_bad.shettle++;
+				printf("Record Found: id- %s\n",id);
+				printf("set returned sucessfully");
 				
 			}
+				else if(strstr(str,"set")==NULL){
+				total.t_bad.racket++;
+				total.t_bad.shettle++;
+				printf("Record Found: id- %s\n",id);
+				printf("Set returned sucessfully");
+				
+			}
+			else if(strstr(str,"shuttle")!= NULL){
+				total.ludo++;
+				printf("Record Found: id - %s\n",id);
+				printf("Shutlle returned successfully");
+				
+			}
+			else if(strstr(str,"rackets")!= NULL){
+				total.ludo++;
+				printf("Record Found: id - %s\n",id);
+				printf("Rackets returned successfully");
+				
+			}
+			else if(strstr(str,"tabletennis")!= NULL){
+				total.table_tennis++;
+				printf("Record Found: id - %s\n",id);
+				printf("Table Tennis Rackets returned successfully");
+				
+			}
+			else if(strstr(str,"football")!= NULL){
+				total.football++;
+				printf("Record Found: id - %s\n",id);
+				printf("Football returned successfully");
+				
+			}
+			sleep(2);
 		}
 	
-	}
 	
-	int remove_data(char *search[8],char item[8]){
+	
+	int remove_data(char search[8]){
 		int suc;
 	int pass = 0;
 	FILE *ptr;
@@ -117,11 +153,11 @@
 	char str1[100]= "" ;
 	while(fgets(str1, 100 ,ptr) != NULL){
 	
-		if(strstr(str1,*search)!=NULL){
+		if(strstr(str1,search)!=NULL){
 		
 			//True-- string found;
 			pass = 1;
-			get_item(*search,str1 );
+			get_item(search,str1 );
 			suc = 1; // success
 		}
 		else{
@@ -237,7 +273,7 @@ retake:
 	
 		do{
 		 pass =0;
-		printf("Enter sports equipment you want to add\n1.\"Enter Volleyball\" for Volleyball\n2.\"Enter Cricket\" for cricket\n3.\"Enter TableTennis\" for table tennis\n4.\"Enter Badminton\" for Badminton \n5.\"Enter Football\" for football\n6.\"Enter Ludo\" for Ludo\n Enter options: ");
+		printf("Enter sports equipment you want to add\n1.\"Enter Volleyball\" for Volleyball\n2.\"Enter Cricket\" for cricket\n3.\"Enter TableTennis\" for table tennis\n4.\"Enter Badminton\" for Badminton \n5.\"Enter Football\" for football\n6.\"Enter Ludo\" for Ludo\n6.\"Enter Chess\" for Chess\n Enter options: ");
 		scanf("%s",&sports);
 		strcpy(sports,strlwr(sports));
 //		printf("%d",total.football);
@@ -258,9 +294,9 @@ retake:
 		}
 		else if(strcmp(sports, "badminton")==0){
 		pass  =1;
-			printf("Enter a for set of badminton or enter b for just rackets or enter c for shettle\nYour option: ");
+			printf("Enter set for set of badminton or enter rackets for just rackets or enter shuttle for shettle\nYour option: ");
 			scanf("%s",&cric_opt );
-			if(strcmp(cric_opt, "a")==0 && total.t_bad.racket !=0&& total.t_bad.shettle !=0){
+			if(strcmp(cric_opt, "set")==0 && total.t_bad.racket !=0&& total.t_bad.shettle !=0){
 				total.t_bad.racket = total.t_bad.racket -1;
 				total.t_bad.shettle = total.t_bad.shettle -1;
 				printf("\nTHE BADMINTON has been succesfully issued to %s\n",record.name);
@@ -268,7 +304,7 @@ retake:
 				add_rec_file();
 				sleep(2);
 			}
-			else if(strcmp(cric_opt, "b")==0 && total.t_bad.racket != 0){
+			else if(strcmp(cric_opt, "rackets")==0 && total.t_bad.racket != 0){
 				total.t_bad.racket = total.t_bad.racket -1;
 				printf("\nThe Racket has been issued succesfully to %s\n",record.name);
 				printf("THE total rackets left are %d",total.t_bad.racket);
@@ -276,7 +312,7 @@ retake:
 				add_rec_file();
 				sleep(2);
 			}
-			else if(strcmp(cric_opt, "c")==0 && total.t_bad.shettle != 0){
+			else if(strcmp(cric_opt, "shuttle")==0 && total.t_bad.shettle != 0){
 				total.t_bad.shettle = total.t_bad.shettle -1;
 				printf("\nThe shettle has been issued succesfully to %s\n",record.name);
 				printf("THE total shettles left are %d",total.t_bad.shettle);
@@ -405,7 +441,7 @@ retake:
 		main_bar();
 	}
 	
-	void Remove_item(void){
+		void Remove_item(void){
 		char cric_opt[6],sports[15] = "", tt_opt[7], ID[7];
 		
 	int check = 0;
@@ -417,12 +453,65 @@ retake:
 	printf("\nEnter your student id: ");
 	fflush(stdin);
 	gets(record.id);
-//		return_data();
+	char ptr[10];
+	strcpy(ptr,record.id);
+		remove_data(ptr);
 		main_bar();
-		
-	}
+		}
 	void Trace (void){
 		
+	char option;
+		int pass = 0;
+		printf("Press a to print all records.\nPress b print selected id details.\n");
+		option = getch(option);
+		if(option == 'a'){
+		printf("Printing all records:");
+		FILE *ptr;
+		ptr = fopen("record.txt","r");
+		char str1[100]= "" ;
+		while(fgets(str1, 100 , ptr) != NULL){
+			printf("%s",str1);
+			pass =1;
+		}
+		
+		fclose(ptr);
+		printf("\nEnter any key to return back to main");
+		getch();
+	}
+	else if(option=='b'){
+		char id[8];
+		printf("Enter Id to print details of: ");
+		scanf("%s",id);
+		FILE *ptr;
+		ptr = fopen("record.txt","r");
+		char str1[100]= "" ;
+		while(fgets(str1, 100 , ptr) != NULL){
+			if(strstr(str1,id)!=NULL){
+				printf("Record Found:\n");
+				printf("%s",str1);
+				pass=1;
+				printf("\nEnter any key to return back to main");
+				getch();
+				break;
+			}
+			else pass =0;
+			
+			
+		}
+		fclose(ptr);
+		
+	}
+	
+	if(pass == 0){
+		printf("No record Found");
+		printf("\nEnter any key to return back to main");
+		getch();
+	}
+
+	main_bar();
+
+	
+
 	}
 	void lost_item(void){
 		
@@ -481,7 +570,7 @@ retake:
 				Report_Complain();
 				break;	
 			case 'f' :
-				printf("Closing Program");
+				printf("Closing Program");		
 				sleep(1);
 				exit(1);
 				break;
@@ -495,7 +584,4 @@ retake:
 				goto switch_case;
 		}
 				}
-	
-
-	
 	
