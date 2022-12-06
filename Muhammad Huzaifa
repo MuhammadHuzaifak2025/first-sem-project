@@ -1,0 +1,501 @@
+#include<stdio.h>
+#include<string.h>
+#include<time.h>
+#include<windows.h>
+	struct student{
+		char name[35];
+		char s_item[25];
+		char id[10];
+	}record;
+	
+	struct userlogin {
+		char user_id[15];
+		char pass[15];	
+	}admin[3];
+
+	struct cric{
+		int wicket;
+		int ball;
+		int bat;
+	};
+	struct badminton{
+		int racket;
+		int shettle;
+	};
+		struct s_equiment{
+		struct cric t_cric;
+		int voll;
+		int ludo;
+		int cards;
+		int chess;
+		struct badminton t_bad;
+		int football;
+		int table_tennis;
+	}total;
+	
+	//Function Decleration
+	void get_item(char id[8], char str[50]);
+	int remove_data(char *search[8],char item[8]);
+	int check_id(char search[7]);
+	void add_rec_file(void);
+	char *user_pass(void);
+	void add_item(void);
+	void Remove_item(void);
+	void Trace (void);
+	void lost_item(void);
+	void Report_Complain(void);
+	void main_bar(void);
+	
+	int main(){
+	total.t_bad.racket = 5;
+	total.t_bad.shettle =5;
+	total.table_tennis = 5;
+	total.voll = 5;
+	total.football = 5;
+	total.chess = 5;
+	total.ludo = 5;
+	total.t_cric.ball =5;
+	total.t_cric.bat =5;
+	total.t_cric.wicket = 5; 
+	user_pass();
+	sleep(3);
+	main_bar();
+}
+	void get_item(char id[8], char str[50]){
+	
+//			True -- string found
+			if(strstr("kit",str)!= NULL){
+				total.t_cric.ball++;
+				total.t_cric.bat++;
+				total.t_cric.wicket++;
+				printf("Record Found: id- %s",id);
+			}
+			else if(strstr("bat",str)!= NULL){
+				total.t_cric.bat++;
+				printf("Record Found: id- %s\n",id);
+				printf("Bat returned successfully\n");
+			}
+			else if(strstr("wicket",str)!= NULL){
+				total.t_cric.wicket++;
+				printf("Record Found: id- %s\n",id);
+				printf("Wicket returned successfully\n");
+			}
+			else if(strstr("ball",str)!= NULL){
+				total.t_cric.ball++;
+				printf("Record Found: id- %s\n",id);
+				printf("Ball returned successfully\n");
+			}
+			
+			else if(strstr("volleyball",str)!= NULL){
+//			True -- string found
+			if(strstr("kit",str)!= NULL){
+				total.voll++;
+				printf("Record Found: id- %s\n",id);
+				printf("Volley retruned Succesfully");
+			}
+			else if(strstr("chess", str)!= NULL){
+				total.chess++;
+				printf("Record Found: id- %s\n",id);
+				printf("Chess returned sucessfully");
+			}
+			else if(strstr("set",str)!=NULL){
+				total.t_bad.racket++;
+				total.t_bad.shettle++;
+				
+			}
+		}
+	
+	}
+	
+	int remove_data(char *search[8],char item[8]){
+		int suc;
+	int pass = 0;
+	FILE *ptr;
+	FILE *temp_ptr;
+	ptr = fopen("record.txt","r");
+	temp_ptr=fopen("temp.txt","w");
+	char str1[100]= "" ;
+	while(fgets(str1, 100 ,ptr) != NULL){
+	
+		if(strstr(str1,*search)!=NULL){
+		
+			//True-- string found;
+			pass = 1;
+			get_item(*search,str1 );
+			suc = 1; // success
+		}
+		else{
+			fprintf(temp_ptr,"%s",str1);
+		}
+	}
+		fclose(ptr);
+		fclose(temp_ptr);
+		char str2[30];
+		temp_ptr = fopen("temp.txt","r");
+		ptr=fopen("record.txt","w");
+		while(fgets(str2, 100 ,temp_ptr)!= NULL){
+			fprintf(ptr,"%s",str2);
+		}
+		fclose(temp_ptr);
+		fclose(ptr);
+		if(pass == 0){
+			printf("No data found");
+		}
+	
+		return suc;
+	}
+	
+	int check_id(char search[7]){
+	int j =0, pass = 0;
+	FILE *ptr;
+	ptr = fopen("record.txt","r");
+	char str1[100];
+	while(fgets(str1, 100 ,ptr) != NULL){
+	if(strstr(str1,search)!=0){
+		pass = 1;
+		break;
+	}
+	else{
+		pass = 0;
+	}
+}
+	fclose(ptr);
+	return pass;
+}
+	void add_rec_file(void){
+ 	FILE *fptr;
+	fptr = fopen("record.txt","a");
+	if(fptr== NULL){
+		printf("Error Opening in file");
+		
+	}
+	else{
+		fprintf(fptr,"\n%s, %s has been issued %s",record.id, record.name,record.s_item);
+	}
+	fclose(fptr);
+
+ }
+ char *user_pass(void){
+	strcpy(admin[0].user_id,"Huzaifa");
+	strcpy(admin[1].user_id,"Daiyan");
+	strcpy(admin[2].user_id,"Ilyas");
+	strcpy(admin[0].pass,"abc123");
+	strcpy(admin[1].pass,"abc456");
+	strcpy(admin[2].pass,"abc789");
+	
+	int i, check_id=5, check_pass=5;
+	char id[15],pass[15];
+	puts("Enter user id: ");
+	gets(id);
+	puts("Enter user password: ");
+	gets(pass);
+//	printf("%s",userid[1]);
+	while(check_id !=0 && check_pass!=0){
+	for(i=0; i<=2; i++){
+	check_id = strcmp(id, admin[i].user_id);
+	if(check_id==0){
+		check_pass = strcmp(pass,admin[i].pass);
+	}
+	if(check_id == 0 && check_pass == 0) {
+		printf("Succesfully login as %s",id);
+	break;
+	}
+	}
+	if(check_id !=0){
+	printf("This user doesn't exsist");
+	puts("\nEnter user id: ");
+	gets(id);
+	}
+	if(check_pass !=0){
+	printf("This password is incorrect for this user");
+	puts("\nEnter user password: ");
+	gets(pass);
+	}
+}
+	printf("\nEntering into system");
+//	return id;
+//	puts(id);
+}
+	void add_item(){
+	char cric_opt[6],sports[15] = "", tt_opt[7], ID[7];
+		
+	int check = 0;
+retake:
+	check = 0;
+	printf("Enter your name: ");
+	fflush(stdin);
+	gets(record.name);
+	printf("\nEnter your student id: ");
+	fflush(stdin);
+	gets(record.id);
+	check = check_id(record.id);	
+	if(check ==  1){
+		printf("Already taken item by %s\n",record.id);
+		goto retake;
+	}
+	int pass;
+	
+		do{
+		 pass =0;
+		printf("Enter sports equipment you want to add\n1.\"Enter Volleyball\" for Volleyball\n2.\"Enter Cricket\" for cricket\n3.\"Enter TableTennis\" for table tennis\n4.\"Enter Badminton\" for Badminton \n5.\"Enter Football\" for football\n6.\"Enter Ludo\" for Ludo\n Enter options: ");
+		scanf("%s",&sports);
+		strcpy(sports,strlwr(sports));
+//		printf("%d",total.football);
+		if(strcmp(sports,"volleyball")==0){
+			pass =1;
+			if(total.voll != 0){
+				total.voll = total.voll - 1;
+				printf("\nVolleyBall succesfully issued to %s\n",record.name);
+				strcpy(record.s_item,sports);
+				printf("The total volley left is: %d\n",total.voll);
+				add_rec_file();
+				sleep(2);
+			}
+			else{
+				printf("Error! The Volleyball is not available now");
+				sleep(2);
+			}
+		}
+		else if(strcmp(sports, "badminton")==0){
+		pass  =1;
+			printf("Enter a for set of badminton or enter b for just rackets or enter c for shettle\nYour option: ");
+			scanf("%s",&cric_opt );
+			if(strcmp(cric_opt, "a")==0 && total.t_bad.racket !=0&& total.t_bad.shettle !=0){
+				total.t_bad.racket = total.t_bad.racket -1;
+				total.t_bad.shettle = total.t_bad.shettle -1;
+				printf("\nTHE BADMINTON has been succesfully issued to %s\n",record.name);
+				strcpy(record.s_item,cric_opt);
+				add_rec_file();
+				sleep(2);
+			}
+			else if(strcmp(cric_opt, "b")==0 && total.t_bad.racket != 0){
+				total.t_bad.racket = total.t_bad.racket -1;
+				printf("\nThe Racket has been issued succesfully to %s\n",record.name);
+				printf("THE total rackets left are %d",total.t_bad.racket);
+				strcpy(record.s_item,cric_opt);
+				add_rec_file();
+				sleep(2);
+			}
+			else if(strcmp(cric_opt, "c")==0 && total.t_bad.shettle != 0){
+				total.t_bad.shettle = total.t_bad.shettle -1;
+				printf("\nThe shettle has been issued succesfully to %s\n",record.name);
+				printf("THE total shettles left are %d",total.t_bad.shettle);
+				strcpy(record.s_item,cric_opt);
+				add_rec_file();
+				sleep(2);
+			}
+			else {
+				printf("Error! Item not availaible now\n");
+				sleep(2);
+			}
+		}
+		else if(strcmp(sports, "tabletennis")==0){
+		pass =1;
+		if(total.table_tennis!=0 ){
+			strcpy(record.s_item,sports);
+			total.table_tennis = total.table_tennis -1;
+			printf("\nTable Tennis rackets issued succesfully to %s\n",record.name);
+			printf("The total left is %d",total.table_tennis);
+			add_rec_file();
+			sleep(2);
+			
+		}
+		else{
+			printf("Error! Racket Not available now");
+			sleep(2);
+			}
+		}
+		else if(strcmp(strlwr(sports), "football")==0){
+			pass =1;
+			if(total.football != 0){
+				strcpy(record.s_item,sports);
+			total.football = total.football-1; 
+			printf("\nTOTAL FOOTBALL LEFT is %d\n",total.football);
+			printf("\nFootball is succesfully issued to %s\n",record.name);
+			add_rec_file();
+			sleep(2);
+			
+			}
+			else{ 
+			printf("Error! Football is not available now");
+			sleep(2);}
+			
+		}
+			else if(strcmp(strlwr(sports), "chess")==0){
+				pass = 1;
+			if(total.chess!=0){
+				strcpy(record.s_item,sports);
+			total.chess = total.chess-1; 
+			printf("\nChess is succesfully issued to %s\n",record.name);
+			printf("\nTOTAL CHESS LEFT is %d",total.chess);
+			add_rec_file();
+			sleep(2);
+			
+			}
+			}
+			else if(strcmp(strlwr(sports),"ludo")==0){
+			pass =1;
+			if(total.ludo!=0){	
+			strcpy(record.s_item,sports);
+			total.ludo = total.ludo-1; 
+			printf("\nLodu is succesfully issued to %s\n",record.name);
+			printf("\nTotal Ludo left is %d",total.ludo);
+			add_rec_file();
+			sleep(2);
+			}
+			else{ 
+			printf("ERROR %s is not avaible",sports);
+			sleep(2);
+			}
+			
+		}
+		
+		else if(strcmp(strlwr(sports), "cricket")==0){
+			printf("\nEnter Kit for whole Kit\nEnter Bat for bat only,\nEnter Ball for ball only,\nEnter Wicket for wicket only\nYour option:  ");
+			scanf("%s",&cric_opt);
+			
+			if(total.t_cric.ball!=0 && total.t_cric.bat!=0 && total.t_cric.wicket!=0 && strcmp(cric_opt,strlwr("kit"))==0){
+				strcpy(record.s_item,cric_opt);
+				pass =1;
+				total.t_cric.ball= total.t_cric.ball-1; 
+				total.t_cric.bat= total.t_cric.bat-1; 
+				total.t_cric.wicket= total.t_cric.wicket-1; 
+				printf("\nCricket Kit is succesfully issued to %s\n",record.name);
+				add_rec_file();
+				sleep(2);
+			}
+			
+			else if(strcmp(cric_opt,strlwr("bat"))==0 && total.t_cric.bat!=0 ){
+				pass =1;
+				strcpy(record.s_item,cric_opt);
+				total.t_cric.bat= total.t_cric.bat-1; 
+				printf("\nBat succesfully issued to %s and left is %d", record.name,total.t_cric.bat);
+				add_rec_file();
+				sleep(2);
+			}
+			else if(strcmp(cric_opt,strlwr("ball"))==0 && total.t_cric.ball!=0){
+				pass =1;
+				strcpy(record.s_item,cric_opt);
+				total.t_cric.ball= total.t_cric.ball-1; 
+				printf("\nBall succesfully issued to %s and left is %d",record.name,total.t_cric.ball);
+				add_rec_file();
+				sleep(2);
+			}
+			else if(strcmp(cric_opt,strlwr("wicket"))==0 && total.t_cric.wicket!=0){
+				pass = 1;
+				strcpy(record.s_item,cric_opt);
+				total.t_cric.wicket= total.t_cric.wicket-1; 
+				printf("\nWicket succesfully issued to %s and left is %d",record.name,total.t_cric.wicket);
+				add_rec_file();
+				sleep(2);
+			}			
+			else{ 
+				printf("ERROR! The %s is not available now ",cric_opt);
+				sleep(2);}
+			
+		}
+		
+		if(pass == 0){
+			printf("You entered invalid choice enter again\n\n");
+			sleep(1);
+		}
+	}while(pass==0);
+	printf("\nReturning Back to MENU");
+	sleep(2);
+		main_bar();
+	}
+	
+	void Remove_item(void){
+		char cric_opt[6],sports[15] = "", tt_opt[7], ID[7];
+		
+	int check = 0;
+	int suc;
+	check = 0;
+	printf("Enter your name: ");
+	fflush(stdin);
+	gets(record.name);
+	printf("\nEnter your student id: ");
+	fflush(stdin);
+	gets(record.id);
+//		return_data();
+		main_bar();
+		
+	}
+	void Trace (void){
+		
+	}
+	void lost_item(void){
+		
+	}
+	
+	void Report_Complain(void){
+		system("cls");
+		char complain[500],name[15],id[10];
+		printf("Enter your name: ");
+		fflush(stdin);
+		gets(name);
+		printf("Enter your Student ID: ");
+		fflush(stdin);
+		gets(id);
+		
+		printf("Write your complain: ");
+		fflush(stdin);
+		gets(complain);
+		FILE *fcmp;
+		fcmp=fopen("complain.txt","a");
+		fprintf(fcmp,"\n%s,%s:\n%s",name,id,complain);
+		fclose(fcmp);
+		printf("Your complain will be forwarded to the Head of Sports Room.");
+		printf("\nReturning Back to MENU");
+	    sleep(2);
+		main_bar();
+		
+	}
+	void main_bar(void){
+//	printf("Record of the system are name: %s, id : %s, equipment: %s",record.name,record.id, record.s_item);
+//	sleep(5);
+//		printf("\nEntering Into system");
+//		sleep(3);
+		switch_case:
+		system("cls");
+//		printf("Currently logged in as %s",Current_Log);
+		printf("\n1.Issue an item \"Press a\"\n2.To Remove an issued item \"Press b\"\n3.Trace an item with id \"Press c\"\n4.Add a lost item \"Press d\" \n5.Report or add a complain \"Press e\"\n6.Quit program \"Press f\" \n7.Clear screen \"Press g\"");
+		char options = '\0';
+		printf("\nThe Option is:");
+		scanf("%s",&options);
+		switch(options){
+			case 'a':
+				system("cls");
+				add_item();
+				break;
+			case'b':
+				Remove_item();
+				break;
+			case'c':
+				Trace();
+				break;
+			case'd':
+				lost_item();
+				break;
+			case'e':
+				Report_Complain();
+				break;	
+			case 'f' :
+				printf("Closing Program");
+				sleep(1);
+				exit(1);
+				break;
+			case'g':
+				system("cls");
+				goto switch_case;
+				break;
+			default:
+				printf("Enter Valid options");
+				sleep(1);
+				goto switch_case;
+		}
+				}
+	
+
+	
+	
