@@ -44,7 +44,7 @@
 	void start_screen();// start screen
 	int admin_check(char*, char*);// verifying if admin user name and password are valid
 	int manager_check(char*, char*);// verifyign if manager name and password are valid
-	
+	void display_complain();
 	void get_item(char id[8], char str[50]); //checks sports items
 	int remove_data(char search[8]);
 	int check_id(char search[7]);
@@ -59,6 +59,7 @@
 	void del_rec_warn_a(char id[8]);
 	void del_rec_warn_b(char id[8]);
 	void set_total();
+	int block(char*);
 	
 	int main()
 {
@@ -88,7 +89,7 @@
 			int ch,ctr = 0;
 			
 			do{
-				ctr = 0;
+				admin:
 			system("cls");
 			printf("Currently logged in as %s\n\n", admin.name);
 			printf("1. Create manager account\n");
@@ -105,12 +106,12 @@
 			else if(ch == 1)
 			{
 				crt_manager();
-				ctr = 1;
+				goto admin;
 			}
-			else if(ch != 2)
+			else if(ch == 3)
 			{
-				printf("Invalid choice try again!\n");
-				ctr = 1;
+				display_complain();
+				goto admin;
 			}
 			}while(ctr == 1);
 		}
@@ -181,14 +182,7 @@
 			total.t_cric.wicket++;
 //			printf("Record Found: id- %s\n",id);
 			printf("Wicket returned successfully\n");
-		}
-		else if(strstr(str,"ball") != NULL)
-		{
-			total.t_cric.ball++;
-//			printf("Record Found: id- %s\n",id);
-			printf("Ball returned successfully\n");
-		}
-		
+		}	
 		else if(strstr(str,"volleyball") != NULL)
 		{
 			total.voll++;
@@ -202,12 +196,10 @@
 //			printf("Record Found: id- %s\n",id);
 			printf("Chess returned sucessfully\n");
 		}
-		else if(strstr(str,"set") == NULL)
+		else if(strstr(str, "ludo") != NULL)
 		{
-			total.t_bad.racket++;
-			total.t_bad.shettle++;
-//			printf("Record Found: id- %s\n",id);
-			printf("set returned sucessfully\n");			
+			total.ludo++;
+			printf("Ludo returned successfully\n");
 		}
 		else if(strstr(str,"shettle") != NULL || strstr(str,"shuttle") != NULL )
 		{
@@ -234,10 +226,18 @@
 //			printf("Record Found: id - %s\n",id);
 			printf("Football returned successfully\n");		
 		}
-		else if(strstr(str, "ludo") != NULL)
+		else if(strstr(str,"set") == NULL)
 		{
-			total.ludo++;
-			printf("Ludo returned successfully\n");
+			total.t_bad.racket++;
+			total.t_bad.shettle++;
+//			printf("Record Found: id- %s\n",id);
+			printf("set returned sucessfully\n");			
+		}
+		else if(strstr(str,"ball") != NULL)
+		{
+			total.t_cric.ball++;
+//			printf("Record Found: id- %s\n",id);
+			printf("Ball returned successfully\n");
 		}
 		printf("Press Enter To Continue... ");
 		getch();
@@ -344,7 +344,7 @@
 	void add_item()
 	{
 		char cric_opt[6],sports[15] = "", tt_opt[7], ID[7];	
-		int check = 0;
+		int check = 0,check1,check2;
 		check = 0;
 		int pass;
 		
@@ -359,10 +359,16 @@
 		gets(record.id);
 		
 		check = check_id(record.id);
-			
-		if(check ==  1)
+		check1 = block(record.id);	
+		
+		if(check ==  1 )
 		{
 			printf("Already taken item by %s\n",record.id);
+			goto retake;
+		}
+		else if(check1 == 1)
+		{
+			printf("User Id has been blacklisted\n");
 			goto retake;
 		}
 		
@@ -556,7 +562,7 @@
 					getch();
 				}
 				
-				else if(strcmp(strlwr(cric_opt),"bat") == 0 && total.t_cric.bat!=0 )
+				else if(strcmp(strlwr(cric_opt),"bat") == 0 && total.t_cric.bat !=0 )
 				{
 					pass = 1;
 					
@@ -725,7 +731,7 @@
 		FILE *block;
 		FILE *record;
 		
-		if(pass_a== 0)
+		if(pass_a == 0)
 		{	
 		
 		record = fopen("record.txt","r+");
@@ -742,7 +748,7 @@
 				
 				del_rec_record(id);
 				
-				printf("Waring One");
+				printf("Warning One\n");
 				
 				pass_a = 1;
 				
@@ -759,6 +765,7 @@
 		if(pass_a == 0)
 		{
 			warn_1= fopen("warn_a.txt","r+");
+			
 			while(fgets(str,100,warn_1)!=NULL)
 			{
 				if(strstr(str,id)!= NULL)
@@ -770,7 +777,7 @@
 					
 					fprintf(warn_2,"%s has lost %s\n",id,item);
 					del_rec_warn_a(id);					
-					printf("\nWaring Two");
+					printf("\nWarning Two\n");
 					
 					fclose(warn_2);
 					
@@ -800,7 +807,7 @@
 					fprintf(block,"%s has lost %s\n",id,item);
 					del_rec_warn_b(id);
 					
-					printf("\nCard Blocked");
+					printf("\nUser Id has been Blacklisted\n");
 					fclose(block);
 					
 					return;
@@ -834,10 +841,9 @@
 		
 		FILE *fcmp;
 		
-		fcmp=fopen("complain.txt","a");
+		fcmp = fopen("complain.txt","a");
 		
-		fprintf(fcmp,"\n%s,%s",name,id);
-		fprintf(fcmp,"\n%s",complain);
+		fprintf(fcmp,"%s %s %s\n",name,id,complain);
 		
 		fclose(fcmp);
 		
@@ -857,7 +863,7 @@
 			
 		system("cls");
 		
-		printf("\nA.Issue an item \nB.To Remove an issued item \nC.Trace an item with id \nD.Add a lost item \nE.Report or add a complain \nF.Quit program \nG.Clear screen ");
+		printf("\nA.Issue an item \nB.To Return an issued item \nC.Trace an item with id \nD.Report a lost item \nE.Report or add a complain \nF.Quit program \nG.Clear screen ");
 		printf("\nChoice: ");
 		scanf("%s",&options);
 		
@@ -884,6 +890,7 @@
 			case'd':
 				
 				 lost_item();
+				 goto switch_case;
 				break;
 				
 			case'e':
@@ -1217,7 +1224,7 @@ int manager_check(char *name, char *pass)
 }
 
 //To Check if the User has More than 2 warnings
-void block(char id[8])
+int block(char id[8])
 	{	
 		int check;
 		char str[50];
@@ -1239,3 +1246,27 @@ void block(char id[8])
 		
 		return check;
 	}
+// TO Display complaints from students to admin
+void display_complain()
+{
+	FILE *fcomplain;
+	char *id;
+	char *name;
+	char *complain;
+	
+	id = (char*) calloc(8,sizeof(char));
+	name = (char*) calloc(20,sizeof(char));
+	complain = (char*) calloc(150,sizeof(char));
+	
+	if((fcomplain = fopen("complain.txt","r"))== NULL)
+	{
+		printf("No Complaints reported");
+		return;
+	}
+	while((fscanf(fcomplain,"%s %s %s",name,id,complain)) != EOF)
+	{	
+		printf("Name: %s\nID:%s\nComplaint: %s\n\n",name,id,complain);
+	}
+	printf("Press Enter to continue....");
+	getch();
+}
