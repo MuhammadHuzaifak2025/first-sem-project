@@ -1074,7 +1074,7 @@ int admin_check(char *name, char *pass)
 	FILE *fadmin;
 	
 	// Cheking if admin txt file exists	
-	if((fadmin = fopen("admin\\admin.txt", "r")) == NULL)
+	if((fadmin = fopen("admin.txt", "r")) == NULL)
 	{
 		printf("Error File does not Exist!\n");
 		getch();
@@ -1127,6 +1127,7 @@ void start_screen()
 //function to create manager account
 int crt_manager()
 {
+	int ctr = 0;
 	user check;
 	user manager;
 	int counter;
@@ -1143,13 +1144,12 @@ int crt_manager()
 	FILE *fmanage;
 	
 	//checking if it exists
-	if((fmanage = fopen("manager\\user.txt", "r")) == NULL)
+	if((fmanage = fopen("user.txt", "r")) == NULL)
 	{
-		printf("Error File does not Exist!\n");
-		getch();
-		return 0;
+		ctr++;
 	}
-	
+	if(ctr == 0)
+	{
 	//Running while loop to scan file for user id and passswords line by line To verify if the user does not already exist
 	while((fscanf(fmanage,"%s %s",check.name,check.pass)) != EOF)
 	{
@@ -1161,11 +1161,13 @@ int crt_manager()
 			getch();
 		}
 	}
+	}
 	fclose(fmanage);
-}while(counter != 0); // repeating get_user if the user name already exists in txt file
+	
+	}while(counter != 0); // repeating get_user if the user name already exists in txt file
 	
 	FILE *fmanager;
-	fmanager = fopen("manager\\user.txt","a");
+	fmanager = fopen("user.txt","a");
 	
 	fprintf(fmanager,"%s %s\n",manager.name,manager.pass);
 	fclose(fmanager);
@@ -1181,7 +1183,7 @@ int manager_check(char *name, char *pass)
 	//Opening .txt file containing manager name and pass in file pointer
 	FILE *fmanage;
 	
-	if((fmanage = fopen("manager\\user.txt", "r")) == NULL)
+	if((fmanage = fopen("user.txt", "r")) == NULL)
 	{
 		printf("Error File does not Exist!\n");
 		getch();
