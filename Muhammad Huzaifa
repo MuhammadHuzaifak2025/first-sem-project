@@ -45,6 +45,9 @@
 	void lost_item(void);
 	void Report_Complain(void);
 	void main_bar(void);
+	void del_rec_record(char id[8]);
+	void del_rec_warn_a(char id[8]);
+	void del_rec_warn_b(char id[8]);
 	
 	int main(){
 	total.t_bad.racket = 5;
@@ -140,11 +143,8 @@
 			}
 			sleep(2);
 		}
-	
-	
-	
 	int remove_data(char search[8]){
-		int suc;
+	int suc;
 	int pass = 0;
 	FILE *ptr;
 	FILE *temp_ptr;
@@ -206,7 +206,7 @@
 		
 	}
 	else{
-		fprintf(fptr,"\n%s, %s has been issued %s",record.id, record.name,record.s_item);
+		fprintf(fptr,"%s, %s has been issued %s",record.id, record.name,record.s_item);
 	}
 	fclose(fptr);
 
@@ -507,14 +507,83 @@ retake:
 		printf("\nEnter any key to return back to main");
 		getch();
 	}
-
 	main_bar();
-
-	
-
 	}
 	void lost_item(void){
+
+		char id[8],item[15],str[100],warn_a[50],warn_b[50],str2[100];
+		int pass_a = 0,pass_b=0, pass_c = 0;
+		printf("Enter Your Id: ");
+		scanf("%s",&id);
+		printf("Enter Item you lost: ");
+		scanf("%s",&item);
+		FILE *warn_1;
+		FILE *warn_2;
+		FILE *block;
+		FILE *record;
+		if(pass_a== 0){
 		
+		record = fopen("record.txt","r+");
+		while(fgets(str,100,record)!=NULL){
+			if(strstr(str,id) != NULL){
+//				Id found in warning one file...
+//				strcpy(warn_a,str);
+				warn_1=fopen("warn_a.txt","a+");
+				fprintf(warn_1,"%s has lost %s\n",id,item);
+				del_rec_record(id);
+				printf("Waring One");
+				pass_a = 1;
+				fclose(warn_1);
+				break;
+			}	
+			else pass_a = 0;
+	}
+	fclose(record);
+		}
+
+		if(pass_a == 0){
+		warn_1= fopen("warn_a.txt","r+");
+		while(fgets(str,100,warn_1)!=NULL){
+			if(strstr(str,id)!= NULL){
+				pass_b = 1;
+				strcpy(warn_a,str);
+				warn_2=fopen("warn_b.txt","a+");
+				fprintf(warn_2,"%s has lost %s\n",id,item);
+				del_rec_warn_a(id);
+				printf("\nWaring Two");
+				fclose(warn_2);
+				return;
+			}
+			else pass_b = 0;
+		}
+	fclose(warn_1);
+	}
+		
+		
+		//Writing to block file from file b
+	if(pass_b == 0){
+	
+		warn_2= fopen("warn_b.txt","r+");
+		while(fgets(str2,100,warn_2)!=NULL){
+		if(strstr(str2,id)!= NULL){
+//				Id found in warning second file...
+				pass_c =1;
+				strcpy(warn_b,str2);
+				block=fopen("block.txt","w");
+				fprintf(block,"%s has lost %s\n",id,item);
+				del_rec_warn_b(id);
+				printf("\nCard Blocked");
+				fclose(block);
+				return;
+		}
+		else pass_c =0;
+	}
+		fclose(warn_2);
+	}
+		if(pass_c == 0 && pass_b==0 && pass_a ==0){
+			printf("Record Not found");
+		}
+	
 	}
 	
 	void Report_Complain(void){
@@ -532,7 +601,8 @@ retake:
 		gets(complain);
 		FILE *fcmp;
 		fcmp=fopen("complain.txt","a");
-		fprintf(fcmp,"\n%s,%s:\n%s",name,id,complain);
+		fprintf(fcmp,"\n%s,%s",name,id);
+		fprintf(fcmp,"\n%s",complain);
 		fclose(fcmp);
 		printf("Your complain will be forwarded to the Head of Sports Room.");
 		printf("\nReturning Back to MENU");
@@ -543,8 +613,6 @@ retake:
 	void main_bar(void){
 //	printf("Record of the system are name: %s, id : %s, equipment: %s",record.name,record.id, record.s_item);
 //	sleep(5);
-//		printf("\nEntering Into system");
-//		sleep(3);
 		switch_case:
 		system("cls");
 //		printf("Currently logged in as %s",Current_Log);
@@ -564,7 +632,7 @@ retake:
 				Trace();
 				break;
 			case'd':
-				lost_item();
+				 lost_item();
 				break;
 			case'e':
 				Report_Complain();
@@ -584,4 +652,89 @@ retake:
 				goto switch_case;
 		}
 				}
+				
+			void del_rec_warn_b(char id[8]){
+	FILE *ptr;
+	FILE *temp_ptr;
+
+	ptr = fopen("warn_b.txt","r");
+	temp_ptr=fopen("temp.txt","w");
+	char str1[100]= "" ;
+	while(fgets(str1, 100 ,ptr) != NULL){
+
+	if(strstr(str1,id)!=NULL){
+	}
+	else{
+	fprintf(temp_ptr,"%s\n",str1);
+	}
+}
+	fclose(ptr);
+	fclose(temp_ptr);
+	char str2[30];
+	temp_ptr = fopen("temp.txt","r+");
+	ptr=fopen("warn_b.txt","w+");
+	while(fgets(str2, 100 ,temp_ptr)!= NULL){
+		fprintf(ptr,"%s\n",str2);
+	}
+	fclose(temp_ptr);
+	fclose(ptr);	
+	return;
 	
+	}
+		void del_rec_warn_a(char id[8]){
+	FILE *ptr;
+	FILE *temp_ptr;
+
+	ptr = fopen("warn_a.txt","r");
+	temp_ptr=fopen("temp.txt","w");
+	char str1[100]= "" ;
+	while(fgets(str1, 100 ,ptr) != NULL){	
+	
+		if(strstr(str1,id)!=NULL){	
+		}
+		else{
+		fprintf(temp_ptr,"%s",str1);
+		}
+	}
+	fclose(ptr);
+	fclose(temp_ptr);
+	char str2[30];
+	temp_ptr = fopen("temp.txt","r");
+	ptr=fopen("warn_a.txt","w");
+	while(fgets(str2, 100 ,temp_ptr)!= NULL){
+		fprintf(ptr,"%s",str2);
+	}
+	fclose(temp_ptr);
+	fclose(ptr);
+		return;
+
+}
+
+		void del_rec_record(char id[8]){
+	FILE *ptr;
+	FILE *temp_ptr;
+
+	ptr = fopen("record.txt","r");
+	temp_ptr=fopen("temp.txt","w");
+	char str1[100]= "" ;
+	while(fgets(str1, 100 ,ptr) != NULL){
+
+	if(strstr(str1,id)!=NULL){
+	}
+	else{
+	fprintf(temp_ptr,"%s",str1);
+	}
+}
+	fclose(ptr);
+	fclose(temp_ptr);
+	char str2[30];
+	temp_ptr = fopen("temp.txt","r");
+	ptr=fopen("record.txt","w");
+	while(fgets(str2, 100 ,temp_ptr)!= NULL){
+		fprintf(ptr,"%s",str2);
+	}
+	fclose(temp_ptr);
+	fclose(ptr);
+		return;
+
+		}
