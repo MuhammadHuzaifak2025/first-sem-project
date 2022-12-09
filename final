@@ -62,11 +62,12 @@
 	void set_total(); //to set total stock of sports equipment
 	int block(char*); //To check if a user id has been blacklisted(d)
 	void item_ret_rec(char*, char*);//to print name and id of student who returned item sucessfully to .txt file
-	void summary(); //to print overall summary of issue and returned items(d)
+	void summary(); //to print overall summary of issue and returned items and blocked accounts(d)
 	
 	int main()
 {
-	system("Color 0A");
+	system("Color 8B");
+	
 	set_total();
 	start_screen();
 	user admin;
@@ -341,7 +342,7 @@
 		while(fgets(str1, 100 ,ptr) != NULL)
 		{
 			
-		if(strstr(str1,search)!=0)
+		if(strstr(str1,search)!= NULL )
 		{
 			pass = 1;
 			break;
@@ -783,9 +784,11 @@
 		FILE *block;
 		FILE *record;
 			//Writing to block file from file b
+			if(check_id(id) == 1){
+			
 		if(pass_b == 0)
 		{
-	
+			
 			warn_2= fopen("warn_b.txt","r+");
 			while(fgets(str2,100,warn_2)!=NULL)
 			{
@@ -841,7 +844,7 @@
 		}
 	fclose(warn_1);
 	}
-				
+	}			
 	
 	if(pass_a == 0)
 		{	
@@ -861,7 +864,7 @@
 				del_rec_record(id);
 				
 				printf("Warning One\n");
-				printf("Enter any key to continue");
+				printf("Enter any key to continue...");
 				getch();
 				
 				pass_a = 1;
@@ -878,8 +881,8 @@
 		
 		if(pass_c == 0 && pass_b==0 && pass_a ==0)
 		{
-			printf("Record Not found");
-			printf("Enter any key to continue");
+			printf("\nRecord Not found\n");
+			printf("Enter any key to continue...");
 			getch();
 		}
 	}
